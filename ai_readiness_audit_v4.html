@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The AI Readiness Audit | Ashaki Sorrell</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f9fafb;min-height:100vh;display:flex;justify-content:center;padding:2rem 1rem}
+.wrap{max-width:680px;width:100%;padding:1.5rem}
+.brand{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.brand-left{font-size:11px;color:#6b7280}
+.brand-left a{color:#1e3a5f;font-weight:600;text-decoration:none}
+.brand-right{font-size:11px;color:#6b7280}
+.hero{background:#1e3a5f;border-radius:12px;padding:1.5rem;margin-bottom:1.25rem}
+.hero h1{color:#fff;font-size:19px;font-weight:600;margin-bottom:4px}
+.hero p{color:#a8c4e0;font-size:13px;line-height:1.5}
+.role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+.role-btn{padding:0.75rem 0.5rem;border:1px solid #e5e7eb;border-radius:10px;background:#fff;font-size:13px;font-weight:500;color:#374151;cursor:pointer;text-align:center;transition:all 0.15s}
+.role-btn.active{background:#1e3a5f;border-color:#1e3a5f;color:#fff}
+.role-btn .role-icon{font-size:20px;display:block;margin-bottom:4px}
+.step-label{font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:#1a7a5e;margin-bottom:0.6rem}
+.q-card{background:#fff;border:0.5px solid #e5e7eb;border-radius:10px;padding:1rem 1.25rem;margin-bottom:0.6rem}
+.q-text{font-size:14px;color:#1f2937;line-height:1.5;margin-bottom:0.75rem}
+.q-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.yn{display:flex;gap:6px}
+.yn button{font-size:12px;font-weight:500;padding:4px 14px;border-radius:6px;border:1px solid #d1d5db;background:#f9fafb;color:#374151;cursor:pointer;transition:all 0.15s}
+.yn button.yes.active{background:#1a7a5e;border-color:#1a7a5e;color:#fff}
+.yn button.no.active{background:#dc2626;border-color:#dc2626;color:#fff}
+.conf-wrap{display:flex;align-items:center;gap:8px;flex:1;min-width:180px}
+.conf-label{font-size:11px;color:#9ca3af;white-space:nowrap}
+.conf-val{font-size:12px;font-weight:500;color:#1e3a5f;min-width:20px;text-align:right}
+input[type=range]{flex:1;height:4px;accent-color:#1a7a5e}
+.followup{background:#f0f7ff;border-left:3px solid #1e3a5f;border-radius:0 8px 8px 0;padding:0.75rem 1rem;margin-top:0.6rem}
+.followup p{font-size:13px;color:#1e3a5f;margin-bottom:8px;font-weight:500}
+.followup-opts{display:flex;flex-direction:column;gap:6px}
+.followup-opts button{background:#fff;border:0.5px solid #93c5fd;border-radius:8px;padding:6px 12px;font-size:12px;color:#1e3a5f;cursor:pointer;text-align:left;transition:all 0.15s}
+.followup-opts button.selected{background:#1e3a5f;color:#fff;border-color:#1e3a5f}
+.cta{width:100%;padding:0.85rem;background:#1e3a5f;color:#fff;font-size:15px;font-weight:500;border:none;border-radius:10px;cursor:pointer;margin-top:0.75rem;transition:background 0.15s}
+.cta:hover{background:#16305a}
+.cta:disabled{background:#9ca3af;cursor:not-allowed}
+.progress-bar-wrap{background:#f3f4f6;border-radius:99px;height:6px;margin-bottom:1.25rem;overflow:hidden}
+.progress-bar{height:100%;border-radius:99px;background:#1a7a5e;transition:width 0.4s ease}
+.share-card{background:#1e3a5f;border-radius:12px;padding:1.5rem;margin-bottom:1rem;color:#fff}
+.sc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
+.share-card h2{font-size:18px;font-weight:600;color:#fff;margin-bottom:4px}
+.sc-sub{font-size:12px;color:#a8c4e0}
+.tier-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px;display:inline-block}
+.tier-pill.ready{background:#d1fae5;color:#065f46}
+.tier-pill.gaps{background:#fef3c7;color:#92400e}
+.tier-pill.foundation{background:#fee2e2;color:#991b1b}
+.score-big{font-size:48px;font-weight:700;color:#fff;line-height:1}
+.score-denom{font-size:18px;color:#a8c4e0}
+.layer-bars{margin-top:1rem;display:flex;flex-direction:column;gap:8px}
+.layer-row{display:flex;align-items:center;gap:10px}
+.layer-name{font-size:12px;color:#a8c4e0;width:70px;flex-shrink:0}
+.layer-bar-bg{flex:1;background:rgba(255,255,255,0.15);border-radius:99px;height:6px;overflow:hidden}
+.layer-bar-fill{height:100%;border-radius:99px;background:#1a7a5e;transition:width 0.6s ease}
+.layer-pct{font-size:11px;color:#a8c4e0;width:30px;text-align:right}
+.diag-card{background:#fff;border:0.5px solid #e5e7eb;border-radius:12px;padding:1.25rem;margin-bottom:0.75rem}
+.diag-card h3{font-size:15px;font-weight:600;color:#1e3a5f;margin-bottom:0.5rem}
+.diag-text{font-size:14px;color:#1f2937;line-height:1.7;white-space:pre-wrap}
+.diag-text.loading{color:#9ca3af;font-style:italic}
+.action-list{margin-top:0.5rem;display:flex;flex-direction:column;gap:6px}
+.action-item{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;background:#f9fafb;border-radius:8px;font-size:13px;color:#1f2937}
+.action-num{background:#1e3a5f;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;margin-top:1px}
+.btn-row{display:flex;gap:8px;margin-top:0.75rem;flex-wrap:wrap}
+.btn-outline{padding:8px 16px;border:1px solid #1e3a5f;border-radius:8px;background:#fff;color:#1e3a5f;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;min-width:160px}
+.btn-outline:hover{background:#f0f7ff}
+.btn-outline.copied{background:#1a7a5e;border-color:#1a7a5e;color:#fff}
+.btn-solid{padding:8px 16px;border:none;border-radius:8px;background:#1a7a5e;color:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s}
+.btn-solid:hover{background:#155f4a}
+.btn-solid:disabled{background:#9ca3af;cursor:not-allowed}
+.reset-link{font-size:13px;color:#1a7a5e;background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:0.5rem;display:block}
+.powered{text-align:center;font-size:11px;color:#9ca3af;margin-top:1.5rem;padding-top:1rem;border-top:0.5px solid #f3f4f6}
+.powered span{color:#d97706}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="brand-left">Curated by <a href="https://www.linkedin.com/in/ashakisorrell/" target="_blank">Ashaki Sorrell</a></div>
+    <div class="brand-right">Powered by Claude</div>
+  </div>
+  <div class="hero">
+    <h1>The AI Readiness Audit</h1>
+    <p>A diagnostic tool for teams serious about AI transformation. Answer honestly. Get a personalized action plan.</p>
+  </div>
+
+  <div id="step-role">
+    <div class="step-label">Step 1 of 3 — Who are you?</div>
+    <div class="role-grid">
+      <button class="role-btn" onclick="setRole('Executive',this)"><span class="role-icon">&#9651;</span>Executive</button>
+      <button class="role-btn" onclick="setRole('Team Lead',this)"><span class="role-icon">&#9632;</span>Team Lead</button>
+      <button class="role-btn" onclick="setRole('Individual Contributor',this)"><span class="role-icon">&#9711;</span>Individual Contributor</button>
+    </div>
+    <button class="cta" id="role-next" onclick="showAudit()" disabled>Continue</button>
+  </div>
+
+  <div id="step-audit" style="display:none">
+    <div class="step-label">Step 2 of 3 — The audit</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="prog-bar" style="width:0%"></div></div>
+    <div id="q-container"></div>
+    <button class="cta" id="audit-next" onclick="submitAudit()" disabled>Generate my diagnostic report</button>
+  </div>
+
+  <div id="step-result" style="display:none">
+    <div class="step-label">Step 3 of 3 — Your results</div>
+    <div class="share-card">
+      <div class="sc-top">
+        <div>
+          <div class="tier-pill" id="tier-pill"></div>
+          <h2 id="result-title" style="margin-top:8px"></h2>
+          <div class="sc-sub" id="result-role"></div>
+        </div>
+        <div style="text-align:right">
+          <div class="score-big" id="score-big"></div>
+          <div class="score-denom">/6 foundations</div>
+        </div>
+      </div>
+      <div class="layer-bars" id="layer-bars"></div>
+      <div style="margin-top:12px;font-size:11px;color:#a8c4e0" id="conf-summary"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-outline" id="copy-btn" onclick="copyFull()">Copy full analysis</button>
+      <button class="btn-solid" id="pdf-btn" onclick="downloadSVG()" disabled>Download report</button>
+    </div>
+    <div class="diag-card" style="margin-top:1rem">
+      <h3>Diagnostic summary</h3>
+      <div class="diag-text loading" id="diag-summary">Analyzing your responses...</div>
+    </div>
+    <div class="diag-card" id="followup-card" style="display:none">
+      <h3>Priority gaps and root causes</h3>
+      <div class="diag-text" id="diag-gaps"></div>
+    </div>
+    <div class="diag-card" id="actions-card" style="display:none">
+      <h3>Your action plan</h3>
+      <div class="action-list" id="action-list"></div>
+    </div>
+    <button class="reset-link" onclick="resetAll()">Start over</button>
+  </div>
+
+  <div class="powered">Built with <span>&#9829;</span> for AI transformation leaders</div>
+</div>
+
+<script>
+const QUESTIONS=[
+  {layer:'Process',q:'Can every team member describe your top 3 workflows the same way?'},
+  {layer:'Process',q:'Are those workflows documented somewhere other than someone\'s memory?'},
+  {layer:'Structure',q:'Is there one place where all project work lives?'},
+  {layer:'Structure',q:'Can someone new find what they need without asking?'},
+  {layer:'Playbook',q:'Does your team have a shared definition of what a good deliverable looks like?'},
+  {layer:'Playbook',q:'Are your quality standards written down and accessible to everyone?'}
+];
+const FOLLOWUP_OPTS={
+  0:['Nobody owns the workflow documentation','We know how but have never written it down','Every person does it differently'],
+  1:['It lives in someone\'s head or old emails','We started but never finished documenting','It changes too often to document'],
+  2:['Tools exist but nobody uses one consistently','We use multiple tools with no single source','Nobody has prioritized setting this up'],
+  3:['Onboarding is informal and verbal','Documentation exists but is outdated','New people always have to ask someone'],
+  4:['Standards vary by person or team','We have an informal sense but nothing defined','Leadership has not aligned on this'],
+  5:['Standards exist verbally but not in writing','We had documentation that became outdated','This has never been a priority']
+};
+
+let role='',answers=new Array(6).fill(null),confidence=new Array(6).fill(3),followups=new Array(6).fill(null);
+let report={score:0,tier:{},avgConf:0,layerScores:[],summaryText:'',gapsText:'',actionsItems:[],role:''};
+
+function setRole(r,btn){
+  role=r;
+  document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('role-next').disabled=false;
+}
+
+function showAudit(){
+  document.getElementById('step-role').style.display='none';
+  document.getElementById('step-audit').style.display='block';
+  renderQuestions();
+}
+
+function renderQuestions(){
+  const c=document.getElementById('q-container');
+  c.innerHTML='';
+  QUESTIONS.forEach((q,i)=>{
+    const prev=i>0&&QUESTIONS[i-1].layer!==q.layer;
+    if(i===0||prev){
+      const lbl=document.createElement('div');
+      lbl.className='step-label';
+      lbl.style.marginTop=i>0?'1rem':'0';
+      lbl.textContent=q.layer;
+      c.appendChild(lbl);
+    }
+    const card=document.createElement('div');
+    card.className='q-card';
+    card.innerHTML=`<div class="q-text">${q.q}</div>
+    <div class="q-row">
+      <div class="yn">
+        <button class="yes" onclick="setAnswer(${i},'yes',this)">Yes</button>
+        <button class="no" onclick="setAnswer(${i},'no',this)">No</button>
+      </div>
+      <div class="conf-wrap">
+        <span class="conf-label">Confidence</span>
+        <input type="range" min="1" max="5" step="1" value="${confidence[i]}" oninput="setConf(${i},this.value,this.nextElementSibling)">
+        <span class="conf-val">${confidence[i]}/5</span>
+      </div>
+    </div>
+    <div class="followup" id="fu-${i}" style="display:none">
+      <p>Help us understand why:</p>
+      <div class="followup-opts" id="fu-opts-${i}">
+        ${FOLLOWUP_OPTS[i].map((o,j)=>`<button onclick="setFollowup(${i},${j},this)">${o}</button>`).join('')}
+      </div>
+    </div>`;
+    c.appendChild(card);
+  });
+  updateProgress();
+}
+
+function setAnswer(i,val,btn){
+  answers[i]=val;
+  btn.closest('.yn').querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('fu-'+i).style.display=val==='no'?'block':'none';
+  if(val==='yes')followups[i]=null;
+  checkReady();updateProgress();
+}
+
+function setConf(i,val,span){confidence[i]=parseInt(val);span.textContent=val+'/5';}
+
+function setFollowup(i,j,btn){
+  followups[i]=j;
+  document.querySelectorAll('#fu-opts-'+i+' button').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  checkReady();
+}
+
+function checkReady(){
+  const allAnswered=answers.every(a=>a!==null);
+  const followupsDone=answers.every((a,i)=>a==='yes'||(a==='no'&&followups[i]!==null));
+  document.getElementById('audit-next').disabled=!(allAnswered&&followupsDone);
+}
+
+function updateProgress(){
+  const done=answers.filter(a=>a!==null).length;
+  document.getElementById('prog-bar').style.width=Math.round((done/6)*100)+'%';
+}
+
+function getTier(score){
+  if(score===6)return{label:'Ready for AI',cls:'ready',title:'You are ready. Move fast.'};
+  if(score>=4)return{label:'Gaps to address',cls:'gaps',title:'Almost there. Close the gaps first.'};
+  return{label:'Foundation first',cls:'foundation',title:'Build the foundation before the AI.'};
+}
+
+async function submitAudit(){
+  const score=answers.filter(a=>a==='yes').length;
+  const tier=getTier(score);
+  const avgConf=Math.round(confidence.reduce((a,b)=>a+b,0)/6*10)/10;
+  const layers=['Process','Structure','Playbook'];
+  const layerScores=layers.map(l=>{
+    const idxs=QUESTIONS.map((q,i)=>q.layer===l?i:-1).filter(i=>i>=0);
+    return{name:l,score:idxs.filter(i=>answers[i]==='yes').length,total:idxs.length,conf:Math.round(idxs.reduce((s,i)=>s+confidence[i],0)/idxs.length*10)/10};
+  });
+  const gaps=answers.map((a,i)=>a==='no'?{q:QUESTIONS[i].q,layer:QUESTIONS[i].layer,why:followups[i]!==null?FOLLOWUP_OPTS[i][followups[i]]:'Not specified',conf:confidence[i]}:null).filter(Boolean);
+  const yeses=answers.map((a,i)=>a==='yes'?{q:QUESTIONS[i].q,conf:confidence[i]}:null).filter(Boolean);
+
+  report={score,tier,avgConf,layerScores,summaryText:'',gapsText:'',actionsItems:[],role};
+
+  document.getElementById('step-audit').style.display='none';
+  document.getElementById('step-result').style.display='block';
+  document.getElementById('tier-pill').textContent=tier.label;
+  document.getElementById('tier-pill').className='tier-pill '+tier.cls;
+  document.getElementById('result-title').textContent=tier.title;
+  document.getElementById('result-role').textContent=role+' perspective';
+  document.getElementById('score-big').textContent=score;
+
+  const lb=document.getElementById('layer-bars');
+  lb.innerHTML=layerScores.map(l=>`<div class="layer-row"><span class="layer-name">${l.name}</span><div class="layer-bar-bg"><div class="layer-bar-fill" style="width:${Math.round((l.score/l.total)*100)}%"></div></div><span class="layer-pct">${l.score}/${l.total}</span></div>`).join('');
+  document.getElementById('conf-summary').textContent='Average confidence across all answers: '+avgConf+'/5';
+
+  const prompt=`You are an expert AI transformation advisor. A ${role} just completed the AI Readiness Audit.
+
+SCORE: ${score}/6
+TIER: ${tier.label}
+AVERAGE CONFIDENCE: ${avgConf}/5
+
+LAYER BREAKDOWN:
+${layerScores.map(l=>`${l.name}: ${l.score}/${l.total} (avg confidence ${l.conf}/5)`).join('\n')}
+
+FOUNDATIONS IN PLACE (answered Yes):
+${yeses.length>0?yeses.map(y=>`- ${y.q} (confidence: ${y.conf}/5)`).join('\n'):'None'}
+
+GAPS (answered No) with root causes:
+${gaps.length>0?gaps.map(g=>`- [${g.layer}] ${g.q}\n  Root cause: ${g.why}\n  Confidence: ${g.conf}/5`).join('\n'):'None - all foundations are in place.'}
+
+Generate a structured diagnostic report with exactly these three sections. Plain language. No em dashes. No bullet points in the summary. Direct and specific. Tailored to a ${role}.
+
+SECTION 1 - DIAGNOSTIC SUMMARY (label it exactly "DIAGNOSTIC SUMMARY"):
+3-4 sentences interpreting the score AND confidence pattern.
+
+SECTION 2 - PRIORITY GAPS AND ROOT CAUSES (label it exactly "PRIORITY GAPS AND ROOT CAUSES"):
+For each gap, 2 sentences: one naming the specific problem, one explaining why it blocks AI adoption. If no gaps, one sentence affirming readiness.
+
+SECTION 3 - ACTION PLAN (label it exactly "ACTION PLAN"):
+Exactly 3 specific sequenced actions for the next 30 days. Each on its own line starting with a number and period.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const text=data.content?.find(b=>b.type==='text')?.text||'Unable to generate report.';
+
+    const summaryMatch=text.match(/DIAGNOSTIC SUMMARY[\s\S]*?(?=PRIORITY GAPS|$)/i);
+    const gapsMatch=text.match(/PRIORITY GAPS AND ROOT CAUSES[\s\S]*?(?=ACTION PLAN|$)/i);
+    const actionsMatch=text.match(/ACTION PLAN[\s\S]*$/i);
+
+    if(summaryMatch){
+      const clean=summaryMatch[0].replace(/DIAGNOSTIC SUMMARY/i,'').trim();
+      document.getElementById('diag-summary').classList.remove('loading');
+      document.getElementById('diag-summary').textContent=clean;
+      report.summaryText=clean;
+    }
+    if(gapsMatch){
+      const clean=gapsMatch[0].replace(/PRIORITY GAPS AND ROOT CAUSES/i,'').trim();
+      report.gapsText=clean;
+      if(gaps.length>0){
+        document.getElementById('followup-card').style.display='block';
+        document.getElementById('diag-gaps').textContent=clean;
+      }
+    }
+    if(actionsMatch){
+      const clean=actionsMatch[0].replace(/ACTION PLAN/i,'').trim();
+      const items=clean.split(/\n/).filter(l=>/^\d+\./.test(l.trim()));
+      report.actionsItems=items.map(item=>item.replace(/^\d+\.\s*/,''));
+      document.getElementById('actions-card').style.display='block';
+      const al=document.getElementById('action-list');
+      al.innerHTML=report.actionsItems.map((item,idx)=>`<div class="action-item"><div class="action-num">${idx+1}</div><div>${item}</div></div>`).join('');
+    }
+
+    document.getElementById('pdf-btn').disabled=false;
+  }catch(e){
+    document.getElementById('diag-summary').textContent='Unable to connect. Please try again.';
+  }
+}
+
+function copyFull(){
+  const btn=document.getElementById('copy-btn');
+  const r=report;
+  const layerLines=r.layerScores.map(l=>`  ${l.name}: ${l.score}/${l.total} (confidence ${l.conf}/5)`).join('\n');
+  const actionLines=r.actionsItems.map((a,i)=>`${i+1}. ${a}`).join('\n');
+
+  let text=`AI READINESS AUDIT RESULTS\nCurated by Ashaki Sorrell | linkedin.com/in/ashakisorrell\n\nROLE: ${r.role}\nSCORE: ${r.score}/6 — ${r.tier.label}\nAVERAGE CONFIDENCE: ${r.avgConf}/5\n\nLAYER SCORES:\n${layerLines}\n\nDIAGNOSTIC SUMMARY:\n${r.summaryText}`;
+  if(r.gapsText)text+=`\n\nPRIORITY GAPS AND ROOT CAUSES:\n${r.gapsText}`;
+  if(r.actionsItems.length>0)text+=`\n\nACTION PLAN:\n${actionLines}`;
+  text+=`\n\n---\nTake the audit: linkedin.com/in/ashakisorrell`;
+
+  const ta=document.createElement('textarea');
+  ta.value=text;
+  ta.style.cssText='position:fixed;left:-9999px;top:0;opacity:0';
+  document.body.appendChild(ta);
+  ta.focus();ta.select();
+  let success=false;
+  try{document.execCommand('copy');success=true;}catch(e){}
+  document.body.removeChild(ta);
+
+  if(success){
+    showCopied(btn);
+  } else if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(()=>showCopied(btn)).catch(()=>{btn.textContent='Copy failed';setTimeout(()=>{btn.textContent='Copy full analysis';},2000);});
+  }
+}
+
+function showCopied(btn){
+  btn.textContent='Copied!';
+  btn.classList.add('copied');
+  setTimeout(()=>{btn.textContent='Copy full analysis';btn.classList.remove('copied');},2500);
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function wrapText(text,maxChars){
+  const words=text.split(' ');
+  const result=[];
+  let current='';
+  words.forEach(word=>{
+    if((current+' '+word).trim().length>maxChars&&current){result.push(current.trim());current=word;}
+    else{current=(current+' '+word).trim();}
+  });
+  if(current)result.push(current.trim());
+  return result;
+}
+
+function downloadSVG(){
+  const r=report;
+  if(!r.summaryText){alert('Report is still generating. Please wait.');return;}
+  const navy='#1e3a5f',green='#1a7a5e',gray='#6b7280',lightgray='#f3f4f6',white='#ffffff';
+  const W=794,M=56,CW=W-M*2;
+  let svgParts=[],y=88;
+
+  svgParts.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" font-family="Arial,sans-serif">`);
+  svgParts.push(`<rect width="${W}" height="72" fill="${navy}"/>`);
+  svgParts.push(`<text x="${M}" y="34" fill="${white}" font-size="18" font-weight="bold">AI Readiness Audit Report</text>`);
+  svgParts.push(`<text x="${M}" y="54" fill="#a8c4e0" font-size="9">Curated by Ashaki Sorrell  |  linkedin.com/in/ashakisorrell  |  Powered by Claude</text>`);
+
+  svgParts.push(`<rect x="${M}" y="${y}" width="${CW}" height="38" rx="6" fill="${lightgray}"/>`);
+  svgParts.push(`<text x="${M+12}" y="${y+24}" fill="${navy}" font-size="10" font-weight="bold">Role: ${esc(r.role)}   |   Score: ${r.score}/6 — ${esc(r.tier.label)}   |   Avg Confidence: ${r.avgConf}/5</text>`);
+  y+=54;
+
+  svgParts.push(`<text x="${M}" y="${y+12}" fill="${green}" font-size="9" font-weight="bold">LAYER SCORES</text>`);
+  svgParts.push(`<line x1="${M}" y1="${y+16}" x2="${M+CW}" y2="${y+16}" stroke="${green}" stroke-width="1"/>`);
+  y+=26;
+  r.layerScores.forEach(l=>{
+    const pct=l.score/l.total;
+    const bw=CW-100;
+    svgParts.push(`<text x="${M}" y="${y+11}" fill="${navy}" font-size="10" font-weight="bold">${esc(l.name)}</text>`);
+    svgParts.push(`<rect x="${M+72}" y="${y+2}" width="${bw}" height="8" rx="4" fill="#e5e7eb"/>`);
+    if(pct>0)svgParts.push(`<rect x="${M+72}" y="${y+2}" width="${Math.round(bw*pct)}" height="8" rx="4" fill="${green}"/>`);
+    svgParts.push(`<text x="${M+72+bw+8}" y="${y+11}" fill="${gray}" font-size="9">${l.score}/${l.total} (conf ${l.conf}/5)</text>`);
+    y+=24;
+  });
+  y+=12;
+
+  const addSection=(title,bodyText)=>{
+    svgParts.push(`<text x="${M}" y="${y+12}" fill="${green}" font-size="9" font-weight="bold">${title}</text>`);
+    svgParts.push(`<line x1="${M}" y1="${y+16}" x2="${M+CW}" y2="${y+16}" stroke="${green}" stroke-width="1"/>`);
+    y+=28;
+    wrapText(bodyText,95).forEach(line=>{
+      svgParts.push(`<text x="${M}" y="${y+11}" fill="#1f2937" font-size="11">${esc(line)}</text>`);
+      y+=16;
+    });
+    y+=12;
+  };
+
+  addSection('DIAGNOSTIC SUMMARY',r.summaryText);
+  if(r.gapsText)addSection('PRIORITY GAPS AND ROOT CAUSES',r.gapsText);
+
+  if(r.actionsItems.length>0){
+    svgParts.push(`<text x="${M}" y="${y+12}" fill="${green}" font-size="9" font-weight="bold">ACTION PLAN</text>`);
+    svgParts.push(`<line x1="${M}" y1="${y+16}" x2="${M+CW}" y2="${y+16}" stroke="${green}" stroke-width="1"/>`);
+    y+=28;
+    r.actionsItems.forEach((item,idx)=>{
+      svgParts.push(`<circle cx="${M+9}" cy="${y+7}" r="9" fill="${navy}"/>`);
+      svgParts.push(`<text x="${M+9}" y="${y+11}" fill="${white}" font-size="9" font-weight="bold" text-anchor="middle">${idx+1}</text>`);
+      const wrapped=wrapText(item,88);
+      wrapped.forEach((line,li)=>{
+        svgParts.push(`<text x="${M+24}" y="${y+(li===0?11:11+li*16)}" fill="#1f2937" font-size="11">${esc(line)}</text>`);
+      });
+      y+=wrapped.length*16+12;
+    });
+  }
+
+  y+=16;
+  svgParts.push(`<rect x="0" y="${y}" width="${W}" height="28" fill="${navy}"/>`);
+  svgParts.push(`<text x="${M}" y="${y+18}" fill="#a8c4e0" font-size="8">AI Readiness Audit  |  Ashaki Sorrell  |  linkedin.com/in/ashakisorrell</text>`);
+  y+=28;
+
+  svgParts.push(`</svg>`);
+
+  const finalSVG=svgParts.join('\n').replace(/<svg /,`<svg height="${y}" `);
+  const blob=new Blob([finalSVG],{type:'image/svg+xml'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='AI_Readiness_Audit_Report.svg';
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+
+  const btn=document.getElementById('pdf-btn');
+  btn.textContent='Downloaded!';
+  setTimeout(()=>{btn.textContent='Download report';},2500);
+}
+
+function resetAll(){
+  role='';
+  answers=new Array(6).fill(null);
+  confidence=new Array(6).fill(3);
+  followups=new Array(6).fill(null);
+  report={score:0,tier:{},avgConf:0,layerScores:[],summaryText:'',gapsText:'',actionsItems:[],role:''};
+  document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('role-next').disabled=true;
+  document.getElementById('audit-next').disabled=true;
+  document.getElementById('pdf-btn').disabled=true;
+  document.getElementById('copy-btn').textContent='Copy full analysis';
+  document.getElementById('copy-btn').classList.remove('copied');
+  document.getElementById('diag-summary').classList.add('loading');
+  document.getElementById('diag-summary').textContent='Analyzing your responses...';
+  document.getElementById('followup-card').style.display='none';
+  document.getElementById('actions-card').style.display='none';
+  document.getElementById('step-result').style.display='none';
+  document.getElementById('step-audit').style.display='none';
+  document.getElementById('step-role').style.display='block';
+}
+</script>
+</body>
+</html>
