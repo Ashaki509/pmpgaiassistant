@@ -1,0 +1,1 @@
+{\n  "version": 2,\n  "functions": {\n    "/api/**": {\n      "runtime": "nodejs16.x"\n    }\n  },\n  "routes": [\n    {\n      "src": "/api/(.*)",\n      "dest": "/api/$1"\n    }\n  ]\n}
