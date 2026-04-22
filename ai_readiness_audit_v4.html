@@ -1,44 +1,783 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Readiness Audit</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Readiness Audit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --border: #1e1e2e;
+      --accent: #c8f03a;
+      --accent2: #3af0c8;
+      --text: #e8e8f0;
+      --muted: #6b6b80;
+      --danger: #f03a6a;
+      --card: #14141f;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(200,240,58,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,240,58,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 60px 24px 100px;
+    }
+
+    .header { margin-bottom: 56px; }
+
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 24px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(36px, 6vw, 58px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    h1 span { color: var(--accent); }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 480px;
+    }
+
+    .progress-label {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .progress-bar {
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-bottom: 48px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    .section {
+      margin-bottom: 48px;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(200,240,58,0.08);
+      border: 1px solid rgba(200,240,58,0.2);
+      border-radius: 4px;
+      padding: 2px 8px;
+      letter-spacing: 0.08em;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .question { margin-bottom: 28px; }
+
+    .question-text {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .options { display: grid; gap: 8px; }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .option:hover {
+      border-color: rgba(200,240,58,0.3);
+      background: rgba(200,240,58,0.04);
+    }
+
+    .option input[type="radio"] { display: none; }
+
+    .option-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1.5px solid var(--muted);
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .option-dot::after {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .option input[type="radio"]:checked + .option-dot { border-color: var(--accent); }
+    .option input[type="radio"]:checked + .option-dot::after { opacity: 1; }
+    .option:has(input:checked) {
+      border-color: rgba(200,240,58,0.4);
+      background: rgba(200,240,58,0.06);
+    }
+
+    .option-label { font-size: 13px; color: var(--text); line-height: 1.4; }
+    .option-score { margin-left: auto; font-size: 10px; color: var(--muted); letter-spacing: 0.05em; }
+
+    textarea {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      resize: vertical;
+      min-height: 80px;
+      transition: border-color 0.15s ease;
+      outline: none;
+    }
+
+    textarea:focus { border-color: rgba(200,240,58,0.4); }
+    textarea::placeholder { color: var(--muted); }
+
+    .submit-area {
+      margin-top: 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .btn-submit {
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: var(--accent);
+      color: #0a0a0f;
+      border: none;
+      padding: 16px 40px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 30px rgba(200,240,58,0.25);
+    }
+
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .form-note { font-size: 11px; color: var(--muted); }
+
+    .loading-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 0;
+      gap: 20px;
+      text-align: center;
+    }
+
+    .loading-state.active { display: flex; }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600; color: var(--muted); }
+    .loading-sub { font-size: 11px; color: var(--muted); opacity: 0.6; }
+
+    .report { display: none; animation: fadeUp 0.5s ease both; }
+    .report.visible { display: block; }
+
+    .score-display {
+      display: flex;
+      align-items: flex-end;
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .score-number {
+      font-family: 'Syne', sans-serif;
+      font-size: 80px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--accent);
+    }
+
+    .score-denom { font-size: 24px; color: var(--muted); margin-bottom: 12px; }
+    .score-label { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .score-desc { font-size: 12px; color: var(--muted); }
+
+    .category-scores {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 480px) { .category-scores { grid-template-columns: 1fr; } }
+
+    .cat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+
+    .cat-name { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 8px; }
+    .cat-bar-wrap { height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+    .cat-bar { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 1s ease; }
+    .cat-score-val { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--text); }
+
+    .report-body {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    .report-body h2 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 24px 0 10px;
+      font-size: 18px;
+    }
+
+    .report-body h3 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      color: var(--accent2);
+      margin: 20px 0 8px;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .report-body p { margin-bottom: 12px; }
+    .report-body strong { color: var(--text); }
+
+    .btn-restart {
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-restart:hover { border-color: var(--accent); color: var(--accent); }
+
+    .error-msg { color: var(--danger); font-size: 12px; display: none; }
+    .error-msg.visible { display: block; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>AI Readiness Audit</h1>
-        <form id="auditForm">
-            <!-- Other form fields -->
-            <button type="submit">Submit</button>
-        </form>
-        <div id="result"></div>
+<div class="wrapper">
+
+  <div class="header">
+    <div class="eyebrow">Assessment Tool</div>
+    <h1>AI Readiness<br/><span>Audit</span></h1>
+    <p class="subtitle">Evaluate your organization's preparedness across leadership, data, infrastructure, and talent — then get a tailored AI strategy report.</p>
+  </div>
+
+  <div id="formView">
+    <div class="progress-label">
+      <span>Completion</span>
+      <span id="progressPct">0%</span>
     </div>
-    <script>
-        document.getElementById('auditForm').onsubmit = function(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            const auditData = {};
-            formData.forEach((value, key) => {
-                auditData[key] = value;
-            });
-            // Call the backend endpoint instead of Claude API
-            fetch('/api/generate-report', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(auditData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('result').innerText = data.report;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        };
-    </script>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+    <form id="auditForm">
+
+      <!-- Section 1: Leadership -->
+      <div class="section" style="animation-delay:0.05s">
+        <div class="section-header">
+          <span class="section-num">01</span>
+          <span class="section-title">Leadership &amp; Strategy</span>
+        </div>
+
+        <div class="question">
+          <div class="question-text">How clearly has your organization defined an AI strategy?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="l1" value="1"/><span class="option-dot"></span><span class="option-label">No strategy exists — AI is not on leadership's radar</span><span class="option-score">1 pt</span></label>
+            <label class="option"><input type="radio" name="l1" value="2"/><span class="option-dot"></span><span class="option-label">Informal conversations happening but nothing documented</span><span class="option-score">2 pt</span></label>
+            <label class="option"><input type="radio" name="l1" value="3"/><span class="option-dot"></span><span class="option-label">A strategy is in draft or being developed</span><span class="option-score">3 pt</span></label>
+            <label class="option"><input type="radio" name="l1" value="4"/><span class="option-dot"></span><span class="option-label">A documented AI strategy exists and is communicated organization-wide</span><span class="option-score">4 pt</span></label>
+          </div>
+        </div>
+
+        <div class="question">
+          <div class="question-text">Does your organization have executive sponsorship for AI initiatives?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="l2" value="1"/><span class="option-dot"></span><span class="option-label">No executive champion exists</span><span class="option-score">1 pt</span></label>
+            <label class="option"><input type="radio" name="l2" value="2"/><span class="option-dot"></span><span class="option-label">Interest exists but no formal ownership</span><span class="option-score">2 pt</span></label>
+            <label class="option"><input type="radio" name="l2" value="3"/><span class="option-dot"></span><span class="option-label">One executive actively sponsors AI projects</span><span class="option-score">3 pt</span></label>
+            <label class="option"><input type="radio" name="l2" value="4"/><span class="option-dot"></span><span class="option-label">AI has board-level attention and dedicated executive ownership</span><span class="option-score">4 pt</span></label>
+          </div>
+        </div>
+
+        <div class="question">
+          <div class="question-text">How does your organization approach AI ethics and governance?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="l3" value="1"/><span class="option-dot"></span><span class="option-label">Not considered</span><span class="option-score">1 pt</span></label>
+            <label class="option"><input type="radio" name="l3" value="2"/><span class="option-dot"></span><span class="option-label">Ad hoc discussions but no formal policy</span><span class="option-score">2 pt</span></label>
+            <label class="option"><input type="radio" name="l3" value="3"/><span class="option-dot"></span><span class="option-label">Ethics guidelines are documented</span><span class="option-score">3 pt</span></label>
+            <label class="option"><input type="radio" name="l3" value="4"/><span class="option-dot"></span><span class="option-label">A formal AI governance framework is in place and enforced</span><span class="option-score">4 pt</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Data -->
+      <div class="section" style="animation-delay:0.1s">
+        <div class="section-header">
+          <span class="section-num">02</span>
+          <span class="section-title">Data Readiness</span>
+        </div>
+
+        <div class="question">
+          <div class="question-text">How would you describe the quality and accessibility of your organization's data?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="d1" value="1"/><span class="option-dot"></span><span class="option-label">Data is siloed, inconsistent, and hard to access</span><span class="option-score">1 pt</span></label>
+            <label class="option"><input type="radio" name="d1" value="2"/><span class="option-dot"></span><span class="option-label">Some data is centralized but quality is inconsistent</span><span class="option-score">2 pt</span></label>
+            <label class="option"><input type="radio" name="d1" value="3"/><span class="option-dot"></span><span class="option-label">Most data is centralized with reasonable quality controls</span><span class="option-score">3 pt</span></label>
+            <label class="option"><input type="radio" name="d1" value="4"/><span class="option-dot"></span><span class="option-label">Data is well-governed, clean, centralized, and readily accessible</span><span class="option-score">4 pt</span></label>
+          </div>
+        </div>
+
+        <div class="question">
+          <div class="question-text">Does your organization have formal data governance policies?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="d2" value="1"/><span class="option-dot"></span><span class="option-label">No data governance exists</span><span class="option-score">1 pt</span></label>
+            <label class="option"><input type="radio" name="d2" value="2"/><span class="option-dot"></span><span class="option-label">Basic policies exist but are loosely followed</span><span class="option-score">2 pt</span></label>
+            <label class="option"><input type="radio" name="d2" value="3"/><span class="option-dot"></span><span class="option-label">Governance policies are in place and generally followed</span><span class="option-score">3 pt</span></label>
+            <label class="option"><input type="radio" name="d2" value="4"/><span class="option-dot"></span><span class="option-label">Comprehensive data governance with audits, ownership, and compliance</span><span class="option-score">4 pt</span></label>
+          </div>
+        </div>
+
+        <div class="question">
+          <div class="question-text">How much proprietary data does your organization have that could train or fine-tune AI?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="d3" value="1"/><span class="option-dot"></span><span class="option-label">Very little proprietary data</span><span class="option-score">1 pt</span></label>
+            <label class="option"><input type="radio" name="d3" value="2"/><span class="option-dot"></span><span class="option-label">Some unique data but not well-organized</span><span class="option-score">2 pt</span></label>
+            <label class="option"><input type="radio" name="d3" value="3"/><span class="option-dot"></span><span class="option-label">Meaningful proprietary data assets that are reasonably organized</span><span class="option-score">3 pt</span></label>
+            <label class="option"><input type="radio" name="d3" value="4"/><span class="option-dot"></span><span class="option-label">Rich, unique data assets structured and ready for AI use</span><span class="option-score">4 pt</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Infrastructure -->
+      <div class="section" style="animation-delay:0.15s">
+        <div class="section-header">
+          <span class="section-num">03</span>
+          <span class="section-title">Infrastructure &amp; Technology</span>
+        </div>
+
+        <div class="question">
+          <div class="question-text">What is the state of your cloud and compute infrastructure?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="i1" value="1"/><span class="option-dot"></span><span class="option-label">Primarily on-premise with limited cloud adoption</span><span class="option-score">1 pt</span></label>
+            <label class="option"><input type="radio" name="i1" value="2"/><span class="option-dot"></span><span class="option-label">Partial cloud migration underway</span><span class="option-score">2 pt</span></label>
+            <label class="option"><input type="radio" name="i1" value="3"/><span class="option-dot"></span><span class="option-label">Mostly cloud-native with scalable compute available</span><span class="option-score">3 pt</span></label>
+            <label class="option"><input type="radio" name="i1" value="4"/><span class="option-dot"></span><span class="option-label">Fully cloud-native with elastic compute optimized for ML workloads</span><span class="option-score">4 pt</span></label>
+          </div>
+        </div>
+
+        <div class="question">
+          <div class="question-text">Does your organization have MLOps or AI deployment pipelines?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="i2" value="1"/><span class="option-dot"></span><span class="option-label">No — AI models would be deployed manually</span><span class="option-score">1 pt</span></label>
+            <label class="option"><input type="radio" name="i2" value="2"/><span class="option-dot"></span><span class="option-label">Basic CI/CD exists but no ML-specific pipelines</span><span class="option-score">2 pt</span></label>
+            <label class="option"><input type="radio" name="i2" value="3"/><span class="option-dot"></span><span class="option-label">Some MLOps tooling is in place</span><span class="option-score">3 pt</span></label>
+            <label class="option"><input type="radio" name="i2" value="4"/><span class="option-dot"></span><span class="option-label">Mature MLOps with automated training, monitoring, and redeployment</span><span class="option-score">4 pt</span></label>
+          </div>
+        </div>
+
+        <div class="question">
+          <div class="question-text">How well does your tech stack support integrating third-party AI APIs?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="i3" value="1"/><span class="option-dot"></span><span class="option-label">Legacy systems make integrations very difficult</span><span class="option-score">1 pt</span></label>
+            <label class="option"><input type="radio" name="i3" value="2"/><span class="option-dot"></span><span class="option-label">Some modern systems but integration requires significant effort</span><span class="option-score">2 pt</span></label>
+            <label class="option"><input type="radio" name="i3" value="3"/><span class="option-dot"></span><span class="option-label">Reasonably modern stack; integrations are manageable</span><span class="option-score">3 pt</span></label>
+            <label class="option"><input type="radio" name="i3" value="4"/><span class="option-dot"></span><span class="option-label">API-first architecture — integrations are fast and low-risk</span><span class="option-score">4 pt</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Talent -->
+      <div class="section" style="animation-delay:0.2s">
+        <div class="section-header">
+          <span class="section-num">04</span>
+          <span class="section-title">Talent &amp; Culture</span>
+        </div>
+
+        <div class="question">
+          <div class="question-text">What AI/ML technical expertise does your organization have in-house?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="t1" value="1"/><span class="option-dot"></span><span class="option-label">No data science or ML expertise</span><span class="option-score">1 pt</span></label>
+            <label class="option"><input type="radio" name="t1" value="2"/><span class="option-dot"></span><span class="option-label">A few individuals with data analysis skills</span><span class="option-score">2 pt</span></label>
+            <label class="option"><input type="radio" name="t1" value="3"/><span class="option-dot"></span><span class="option-label">A small data science or ML team</span><span class="option-score">3 pt</span></label>
+            <label class="option"><input type="radio" name="t1" value="4"/><span class="option-dot"></span><span class="option-label">Dedicated AI/ML team with deep expertise across multiple disciplines</span><span class="option-score">4 pt</span></label>
+          </div>
+        </div>
+
+        <div class="question">
+          <div class="question-text">How AI-literate is your broader workforce (non-technical employees)?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="t2" value="1"/><span class="option-dot"></span><span class="option-label">Most employees have no familiarity with AI tools</span><span class="option-score">1 pt</span></label>
+            <label class="option"><input type="radio" name="t2" value="2"/><span class="option-dot"></span><span class="option-label">Awareness exists but few use AI tools day-to-day</span><span class="option-score">2 pt</span></label>
+            <label class="option"><input type="radio" name="t2" value="3"/><span class="option-dot"></span><span class="option-label">Many employees actively use AI tools; some training has occurred</span><span class="option-score">3 pt</span></label>
+            <label class="option"><input type="radio" name="t2" value="4"/><span class="option-dot"></span><span class="option-label">Organization-wide AI literacy with structured training programs</span><span class="option-score">4 pt</span></label>
+          </div>
+        </div>
+
+        <div class="question">
+          <div class="question-text">How open is your organizational culture to AI-driven change?</div>
+          <div class="options">
+            <label class="option"><input type="radio" name="t3" value="1"/><span class="option-dot"></span><span class="option-label">High resistance — fear of job displacement is prevalent</span><span class="option-score">1 pt</span></label>
+            <label class="option"><input type="radio" name="t3" value="2"/><span class="option-dot"></span><span class="option-label">Mixed — some enthusiasm, some skepticism</span><span class="option-score">2 pt</span></label>
+            <label class="option"><input type="radio" name="t3" value="3"/><span class="option-dot"></span><span class="option-label">Generally positive — teams are curious and willing to experiment</span><span class="option-score">3 pt</span></label>
+            <label class="option"><input type="radio" name="t3" value="4"/><span class="option-dot"></span><span class="option-label">AI-forward culture — experimentation is encouraged and rewarded</span><span class="option-score">4 pt</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Context -->
+      <div class="section" style="animation-delay:0.25s">
+        <div class="section-header">
+          <span class="section-num">05</span>
+          <span class="section-title">Context</span>
+        </div>
+        <div class="question">
+          <div class="question-text">Briefly describe your industry and the primary AI use case you're exploring.</div>
+          <textarea name="context" placeholder="e.g. We're a mid-size healthcare company exploring AI for patient triage and internal document search..."></textarea>
+        </div>
+      </div>
+
+      <div class="submit-area">
+        <button type="submit" class="btn-submit" id="submitBtn">Generate My Report →</button>
+        <p class="form-note">Takes ~20 seconds · Powered by Claude AI</p>
+        <p class="error-msg" id="errorMsg">Something went wrong. Please check your connection and try again.</p>
+      </div>
+    </form>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" id="loadingView">
+    <div class="spinner"></div>
+    <div class="loading-text">Analyzing your responses...</div>
+    <div class="loading-sub">Claude is generating your personalized AI readiness report</div>
+  </div>
+
+  <!-- Report -->
+  <div class="report" id="reportView">
+    <div class="header">
+      <div class="eyebrow">Your Results</div>
+      <h1>AI Readiness<br/><span>Report</span></h1>
+    </div>
+
+    <div class="score-display">
+      <div class="score-number" id="totalScore">—</div>
+      <div class="score-denom">/48</div>
+      <div>
+        <div class="score-label" id="scoreTier">—</div>
+        <div class="score-desc" id="scoreDesc">Overall AI Readiness Rating</div>
+      </div>
+    </div>
+
+    <div class="category-scores">
+      <div class="cat-card">
+        <div class="cat-name">Leadership &amp; Strategy</div>
+        <div class="cat-bar-wrap"><div class="cat-bar" id="barL" style="width:0%"></div></div>
+        <div class="cat-score-val" id="scoreL">—</div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-name">Data Readiness</div>
+        <div class="cat-bar-wrap"><div class="cat-bar" id="barD" style="width:0%"></div></div>
+        <div class="cat-score-val" id="scoreD">—</div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-name">Infrastructure</div>
+        <div class="cat-bar-wrap"><div class="cat-bar" id="barI" style="width:0%"></div></div>
+        <div class="cat-score-val" id="scoreI">—</div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-name">Talent &amp; Culture</div>
+        <div class="cat-bar-wrap"><div class="cat-bar" id="barT" style="width:0%"></div></div>
+        <div class="cat-score-val" id="scoreT">—</div>
+      </div>
+    </div>
+
+    <div class="report-body" id="reportBody"></div>
+    <button class="btn-restart" onclick="restart()">← Start Over</button>
+  </div>
+
+</div>
+
+<script>
+  const QUESTIONS = ['l1','l2','l3','d1','d2','d3','i1','i2','i3','t1','t2','t3'];
+
+  document.addEventListener('change', updateProgress);
+
+  function updateProgress() {
+    const answered = QUESTIONS.filter(n => document.querySelector(`input[name="${n}"]:checked`)).length;
+    const pct = Math.round((answered / QUESTIONS.length) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressPct').textContent = pct + '%';
+  }
+
+  function getScore(names) {
+    return names.reduce((sum, n) => {
+      const el = document.querySelector(`input[name="${n}"]:checked`);
+      return sum + (el ? parseInt(el.value) : 0);
+    }, 0);
+  }
+
+  function getLabel(n) {
+    const el = document.querySelector(`input[name="${n}"]:checked`);
+    return el ? el.parentElement.querySelector('.option-label').textContent : 'Not answered';
+  }
+
+  function getTier(score) {
+    if (score <= 18) return ['Early Stage', 'Foundational work needed before AI projects can succeed at scale.'];
+    if (score <= 30) return ['Developing', 'Building blocks are in place — targeted investments can accelerate readiness.'];
+    if (score <= 40) return ['Advanced', 'Strong foundation with a few gaps — ready for ambitious AI initiatives.'];
+    return ['AI-Ready', 'Exceptional readiness — positioned to lead with AI-driven competitive advantage.'];
+  }
+
+  document.getElementById('auditForm').onsubmit = async function(e) {
+    e.preventDefault();
+
+    const missing = QUESTIONS.filter(n => !document.querySelector(`input[name="${n}"]:checked`));
+    if (missing.length > 0) {
+      alert(`Please answer all questions before submitting. (${missing.length} unanswered)`);
+      return;
+    }
+
+    document.getElementById('errorMsg').classList.remove('visible');
+    document.getElementById('submitBtn').disabled = true;
+
+    const lScore = getScore(['l1','l2','l3']);
+    const dScore = getScore(['d1','d2','d3']);
+    const iScore = getScore(['i1','i2','i3']);
+    const tScore = getScore(['t1','t2','t3']);
+    const total = lScore + dScore + iScore + tScore;
+    const context = document.querySelector('textarea[name="context"]').value;
+
+    document.getElementById('formView').style.display = 'none';
+    document.getElementById('loadingView').classList.add('active');
+
+    const prompt = `You are an expert AI strategy consultant. A company has completed an AI Readiness Audit. Analyze their responses and generate a detailed, specific, and actionable report.
+
+SCORES:
+- Leadership & Strategy: ${lScore}/12
+  - AI Strategy clarity: ${getLabel('l1')}
+  - Executive sponsorship: ${getLabel('l2')}
+  - AI ethics & governance: ${getLabel('l3')}
+- Data Readiness: ${dScore}/12
+  - Data quality & accessibility: ${getLabel('d1')}
+  - Data governance: ${getLabel('d2')}
+  - Proprietary data assets: ${getLabel('d3')}
+- Infrastructure & Technology: ${iScore}/12
+  - Cloud & compute: ${getLabel('i1')}
+  - MLOps/AI pipelines: ${getLabel('i2')}
+  - Tech stack integration: ${getLabel('i3')}
+- Talent & Culture: ${tScore}/12
+  - AI/ML technical expertise: ${getLabel('t1')}
+  - Workforce AI literacy: ${getLabel('t2')}
+  - Cultural openness to AI: ${getLabel('t3')}
+
+TOTAL SCORE: ${total}/48
+COMPANY CONTEXT: ${context || 'Not provided'}
+
+Write a professional AI readiness report with these clearly labeled sections:
+## Executive Summary
+## Key Strengths
+## Critical Gaps
+## 90-Day Action Plan
+## 18-Month Strategic Roadmap
+${context ? '## Industry-Specific Considerations' : ''}
+
+Be direct, specific, and tailored to their actual scores. Avoid generic advice. Write in clear paragraphs.`;
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      const data = await response.json();
+      const reportText = data.content?.map(b => b.text || '').join('') || 'Unable to generate report.';
+
+      // Populate scores
+      document.getElementById('totalScore').textContent = total;
+      const [tier, tierDesc] = getTier(total);
+      document.getElementById('scoreTier').textContent = tier;
+      document.getElementById('scoreDesc').textContent = tierDesc;
+      document.getElementById('scoreL').textContent = `${lScore}/12`;
+      document.getElementById('scoreD').textContent = `${dScore}/12`;
+      document.getElementById('scoreI').textContent = `${iScore}/12`;
+      document.getElementById('scoreT').textContent = `${tScore}/12`;
+
+      setTimeout(() => {
+        document.getElementById('barL').style.width = (lScore/12*100) + '%';
+        document.getElementById('barD').style.width = (dScore/12*100) + '%';
+        document.getElementById('barI').style.width = (iScore/12*100) + '%';
+        document.getElementById('barT').style.width = (tScore/12*100) + '%';
+      }, 300);
+
+      // Format markdown-ish text to HTML
+      const formatted = reportText
+        .replace(/^## (.+)$/gm, '</p><h2>$1</h2><p>')
+        .replace(/^### (.+)$/gm, '</p><h3>$1</h3><p>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n\n/g, '</p><p>')
+        .trim();
+
+      document.getElementById('reportBody').innerHTML = '<p>' + formatted + '</p>';
+
+      document.getElementById('loadingView').classList.remove('active');
+      document.getElementById('reportView').classList.add('visible');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (err) {
+      console.error(err);
+      document.getElementById('loadingView').classList.remove('active');
+      document.getElementById('formView').style.display = 'block';
+      document.getElementById('submitBtn').disabled = false;
+      document.getElementById('errorMsg').classList.add('visible');
+    }
+  };
+
+  function restart() {
+    document.getElementById('reportView').classList.remove('visible');
+    document.getElementById('auditForm').reset();
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('formView').style.display = 'block';
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
 </body>
 </html>
