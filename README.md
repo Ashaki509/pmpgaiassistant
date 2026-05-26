@@ -9,24 +9,24 @@ A collection of practical, interactive AI assistants built specifically for **Pr
 ### 1. First 90 Days AI Assistant
 Helps new PMs and PgMs quickly build trust, understand context, and deliver early impact in their critical first 90 days.
 
-**[→ Launch First 90 Days Assistant](first-90-days/ai_readiness_audit_v4.html)**
+**[→ Launch First 90 Days Assistant](first-90-days/pm_pgm_first90_ai_assistant.html)**
 
 Supporting resource: [`First90DaysPM_PgM.pdf`](first-90-days/First90DaysPM_PgM.pdf)
 
 ---
 
 ### 2. Communication Framework Coach
-Your personal AI coach for high-stakes communication — executive updates, stakeholder management, escalations, status reporting, team meetings, and more.
+Your personal AI coach for high-stakes communication — executive updates, stakeholder management, escalations, status reporting, and more.
 
-**[→ Launch Communication Framework Coach](communication-coach/communication-framework-coach.html)**
+**[→ Launch Communication Framework Coach](communication-coach/comm_framework_coach.html)**
 
 ---
 
 ## Why These Tools?
 
-Built from real-world experience leading complex technical programs. Focused on **practical, actionable advice** you can use immediately.
+Built from real-world experience leading complex technical programs. Focused on **practical, actionable advice**.
 
-Both tools work offline after loading and are completely free.
+Both tools are client-side and work offline after loading.
 
 ---
 
