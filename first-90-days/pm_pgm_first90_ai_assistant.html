@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PM / PgM First 90 Days AI Assistant</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F7F6F2; --surface: #fff; --surface2: #F2F0EB;
+  --border: rgba(0,0,0,0.1); --border-strong: rgba(0,0,0,0.18);
+  --text: #1A1A1A; --text-mid: #4A4A4A; --text-muted: #888880;
+  --teal: #1D7A8A; --teal-bg: #E1F3F5; --teal-border: #A0CDD4;
+  --gold: #B8860B; --gold-bg: #FDF5DC; --gold-border: #DFC97A;
+  --danger: #C0392B; --r-sm: 6px; --r-md: 10px; --r-lg: 14px;
+}
+body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+.header { background: var(--surface); border-bottom: 0.5px solid var(--border); padding: 22px 32px 20px; }
+.eyebrow { font-size: 12px; color: var(--text-muted); margin-bottom: 5px; }
+.eyebrow a { color: var(--teal); text-decoration: none; font-weight: 600; border-bottom: 1px solid var(--teal-border); }
+.eyebrow a:hover { border-bottom-color: var(--teal); }
+h1 { font-size: 26px; font-weight: 800; color: var(--text); line-height: 1.15; margin-bottom: 8px; }
+h1 em { color: var(--teal); font-style: normal; }
+.sub { font-size: 13px; color: var(--text-muted); line-height: 1.6; max-width: 780px; }
+.main { display: grid; grid-template-columns: 270px 1fr; min-height: calc(100vh - 118px); }
+.sidebar { background: var(--surface); border-right: 0.5px solid var(--border); padding: 16px 12px; overflow-y: auto; }
+.sidebar-lbl { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; padding: 0 3px; }
+.card { border-radius: var(--r-md); padding: 11px 12px; cursor: pointer; border: 0.5px solid transparent; margin-bottom: 5px; transition: background .12s, border-color .12s; }
+.card:hover { background: var(--surface2); border-color: var(--border); }
+.card.active { background: var(--teal-bg); border-color: var(--teal-border); }
+.c-row { display: flex; gap: 8px; align-items: flex-start; }
+.c-num { font-size: 10px; font-weight: 600; color: var(--text-muted); padding-top: 1px; min-width: 18px; }
+.card.active .c-num { color: var(--teal); }
+.c-title { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.3; margin-bottom: 2px; }
+.card.active .c-title { color: var(--teal); }
+.c-desc { font-size: 11px; color: var(--text-muted); line-height: 1.35; }
+.badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 99px; margin-top: 4px; }
+.bt { background: var(--teal-bg); color: var(--teal); }
+.bg { background: var(--gold-bg); color: var(--gold); }
+.content { display: flex; flex-direction: column; overflow: hidden; height: calc(100vh - 118px); }
+.form-view { padding: 28px 36px; overflow-y: auto; flex: 1; }
+.empty { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 360px; text-align: center; color: var(--text-muted); gap: 10px; }
+.empty-icon { width: 44px; height: 44px; background: var(--surface2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.empty h3 { font-size: 15px; font-weight: 600; color: var(--text-mid); }
+.empty p { font-size: 13px; max-width: 260px; line-height: 1.5; }
+.p-row { display: flex; align-items: center; gap: 9px; margin-bottom: 4px; }
+.p-num { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+.p-title { font-size: 19px; font-weight: 700; color: var(--text); }
+.p-tag { font-size: 13px; color: var(--text-muted); margin-bottom: 22px; }
+.fg { margin-bottom: 15px; }
+.fl { font-size: 12px; font-weight: 600; color: var(--text-mid); display: block; margin-bottom: 5px; }
+.fg input, .fg textarea { width: 100%; font-family: system-ui, sans-serif; font-size: 13px; padding: 9px 12px; border: 0.5px solid var(--border-strong); border-radius: var(--r-sm); background: var(--surface); color: var(--text); outline: none; line-height: 1.5; transition: border-color .12s, box-shadow .12s; }
+.fg input:focus, .fg textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(29,122,138,.1); }
+.fg input.err, .fg textarea.err { border-color: var(--danger); }
+.fg textarea { min-height: 80px; resize: vertical; }
+.run-btn { display: inline-flex; align-items: center; gap: 7px; font-family: system-ui, sans-serif; font-size: 13px; font-weight: 600; padding: 9px 18px; border-radius: var(--r-sm); cursor: pointer; background: var(--teal); color: #fff; border: none; transition: opacity .15s; }
+.run-btn:hover { opacity: .87; }
+.run-btn:disabled { opacity: .4; cursor: not-allowed; }
+.spin { display: none; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .65s linear infinite; }
+.spin.on { display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.st { font-size: 12px; color: var(--text-muted); }
+.chat-view { display: none; flex-direction: column; height: 100%; }
+.chat-view.active { display: flex; }
+.chat-topbar { display: flex; align-items: center; gap: 10px; padding: 13px 20px; background: var(--surface); border-bottom: 0.5px solid var(--border); flex-shrink: 0; }
+.chat-back { font-family: system-ui, sans-serif; font-size: 12px; color: var(--teal); background: none; border: none; cursor: pointer; padding: 4px 0; font-weight: 600; }
+.chat-back:hover { opacity: .75; }
+.chat-topic { font-size: 13px; font-weight: 600; color: var(--text); }
+.chat-reset { margin-left: auto; font-family: system-ui, sans-serif; font-size: 11px; color: var(--text-muted); background: none; border: 0.5px solid var(--border); border-radius: var(--r-sm); cursor: pointer; padding: 4px 10px; }
+.chat-reset:hover { color: var(--text); border-color: var(--border-strong); }
+.chat-messages { flex: 1; overflow-y: auto; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
+.msg { display: flex; gap: 9px; align-items: flex-start; max-width: 90%; }
+.msg.user { align-self: flex-end; flex-direction: row-reverse; }
+.msg.assistant { align-self: flex-start; }
+.msg-avatar { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; margin-top: 2px; }
+.msg.assistant .msg-avatar { background: var(--teal-bg); color: var(--teal); }
+.msg.user .msg-avatar { background: var(--surface2); color: var(--text-mid); }
+.msg-bubble { padding: 10px 14px; font-size: 13px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+.msg.assistant .msg-bubble { background: var(--surface); border: 0.5px solid var(--border); color: var(--text); border-radius: 4px var(--r-lg) var(--r-lg) var(--r-lg); }
+.msg.user .msg-bubble { background: var(--teal); color: #fff; border-radius: var(--r-lg) 4px var(--r-lg) var(--r-lg); }
+.msg-copy { font-size: 10px; color: var(--text-muted); background: none; border: none; cursor: pointer; padding: 3px 0; margin-top: 3px; display: block; }
+.msg-copy:hover { color: var(--teal); }
+.typing-indicator { display: flex; gap: 4px; align-items: center; padding: 12px 14px; background: var(--surface); border: 0.5px solid var(--border); border-radius: 4px var(--r-lg) var(--r-lg) var(--r-lg); width: fit-content; }
+.typing-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); animation: bounce .9s infinite; }
+.typing-dot:nth-child(2) { animation-delay: .15s; }
+.typing-dot:nth-child(3) { animation-delay: .3s; }
+@keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+.chat-input-area { flex-shrink: 0; padding: 12px 20px; background: var(--surface); border-top: 0.5px solid var(--border); display: flex; gap: 10px; align-items: flex-end; }
+.chat-input { flex: 1; font-family: system-ui, sans-serif; font-size: 13px; padding: 9px 13px; border: 0.5px solid var(--border-strong); border-radius: var(--r-md); background: var(--bg); color: var(--text); outline: none; resize: none; line-height: 1.5; max-height: 120px; overflow-y: auto; transition: border-color .12s, box-shadow .12s; }
+.chat-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(29,122,138,.1); }
+.send-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--r-sm); background: var(--teal); color: #fff; border: none; cursor: pointer; flex-shrink: 0; transition: opacity .15s; }
+.send-btn:hover { opacity: .85; }
+.send-btn:disabled { opacity: .35; cursor: not-allowed; }
+@media (max-width: 640px) {
+  .main { grid-template-columns: 1fr; }
+  .sidebar { border-right: none; border-bottom: 0.5px solid var(--border); max-height: 220px; }
+  .content { height: auto; }
+  .chat-view { height: 70vh; }
+  .header, .form-view { padding: 18px; }
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="eyebrow">Curated by <a href="https://www.linkedin.com/in/ashakisorrell/" target="_blank" rel="noopener noreferrer">Ashaki Sorrell</a></div>
+  <h1>PM / PgM <em>First 90 Days</em> AI Assistant</h1>
+  <p class="sub">Your first 90 days as a Project or Program Manager set the tone for everything that follows. This tool turns 10 proven onboarding strategies into AI-powered prompts so you can walk in with the right emails drafted, your stakeholders mapped, your dependencies surfaced, and your first win already in sight. Fill in your context, hit Generate, then keep the conversation going.</p>
+</div>
+<div class="main">
+  <div class="sidebar">
+    <div class="sidebar-lbl">10 prompts</div>
+    <div id="cardList"></div>
+  </div>
+  <div class="content">
+    <div class="form-view" id="formView">
+      <div class="empty" id="emptyState">
+        <div class="empty-icon">🗂️</div>
+        <h3>Choose a prompt to get started</h3>
+        <p>Select one of the 10 cards on the left to generate tailored output for your project.</p>
+      </div>
+      <div id="promptForm" style="display:none;">
+        <div class="p-row"><span class="p-num" id="fNum"></span><span class="p-title" id="fTitle"></span></div>
+        <div class="p-tag" id="fTag"></div>
+        <div id="fFields"></div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px;">
+          <button class="run-btn" id="runBtn" onclick="run()">Generate <span class="spin" id="spin"></span><span id="arr">↗</span></button>
+          <span class="st" id="st"></span>
+        </div>
+      </div>
+    </div>
+    <div class="chat-view" id="chatView">
+      <div class="chat-topbar">
+        <button class="chat-back" onclick="backToForm()">← Edit inputs</button>
+        <span class="chat-topic" id="chatTopic"></span>
+        <button class="chat-reset" onclick="resetChat()">Start over</button>
+      </div>
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input-area">
+        <textarea class="chat-input" id="chatInput" placeholder="Reply or ask a follow-up... (Enter to send, Shift+Enter for new line)" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMsg()" title="Send">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M3 10L17 3L10 17L9 11L3 10Z" fill="white"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const NO_MD="Never use asterisks, bullet symbols, or markdown formatting. Write in clean plain text with numbered lists where helpful.";
+const BADGES={Email:"bt",Analysis:"bt",Risk:"bg",Strategy:"bg",Template:"bt",People:"bg",Judgment:"bg"};
+const prompts=[
+  {num:"#1",title:"Meet every stakeholder fast",desc:"Write a 1:1 intro email to a stakeholder",badge:"Email",
+   fields:[{id:"project",label:"Project name",type:"input",ph:"e.g. Customer Portal Redesign"},{id:"role",label:"Stakeholder role",type:"input",ph:"e.g. VP of Engineering, Head of Finance"}],
+   sys:"You are an expert project management coach helping a new PM write professional, concise communications. Warm but direct tone. No filler. "+NO_MD,
+   prompt:f=>`I'm a new PM starting on "${f.project}". Help me write a short, warm 1:1 intro email to a ${f.role}. The email should ask what success looks like to them on this project without sounding like I'm fishing for requirements. Keep it under 150 words.`},
+  {num:"#2",title:"Shadow your team",desc:"Analyze what you observed in a team meeting",badge:"Analysis",
+   fields:[{id:"meeting",label:"Meeting type",type:"input",ph:"e.g. standup, retro, planning session"},{id:"notes",label:"What you observed",type:"textarea",ph:"Paste your raw notes or observations here..."}],
+   sys:"You are an expert project management coach. Help new PMs develop pattern recognition. Be specific and actionable. "+NO_MD,
+   prompt:f=>`I'm a new PM and I just sat in on a ${f.meeting} as an observer. Here's what I noticed:\n\n${f.notes}\n\nWhat patterns or red flags should I pay attention to? What 2-3 targeted questions should I ask next to learn more?`},
+  {num:"#3",title:"Audit the project history",desc:"Identify gaps and themes from docs you've read",badge:"Analysis",
+   fields:[{id:"summary",label:"Summary of docs and history you've read",type:"textarea",ph:"e.g. I read the original charter, two old retro docs, and a risk log from last quarter..."}],
+   sys:"You are an expert project management coach. Help new PMs synthesize project history into actionable insights. Be direct and specific. "+NO_MD,
+   prompt:f=>`I'm a new PM auditing this project's history. Here's a summary of what I've read so far:\n\n${f.summary}\n\nWhat key gaps, unresolved decisions, or recurring themes should I flag before I go further? List the top 3-5 with a brief reason why each matters.`},
+  {num:"#4",title:"Map every dependency",desc:"Build a dependency risk log for your project",badge:"Risk",
+   fields:[{id:"teams",label:"Teams and systems involved",type:"textarea",ph:"e.g. Frontend eng, backend API team, Salesforce CRM, external vendor for payments..."}],
+   sys:"You are a senior program manager and expert at dependency and risk analysis. Be precise and practical. "+NO_MD,
+   prompt:f=>`My project involves these teams and systems:\n\n${f.teams}\n\nHelp me build a dependency risk log. For each dependency, suggest: (1) the risk if it's not managed, (2) the key question I need to answer to validate it, and (3) who owns it. Format as a clean numbered list.`},
+  {num:"#5",title:"Learn what 'done' means",desc:"Pressure-test your project's success metrics",badge:"Strategy",
+   fields:[{id:"goal",label:"What the charter or brief says the goal is",type:"textarea",ph:"e.g. Launch a redesigned checkout flow by Q3..."},{id:"sponsor",label:"Your executive sponsor's role",type:"input",ph:"e.g. Chief Product Officer"}],
+   sys:"You are a strategic program management advisor. Help new PMs cut through vague goals to find the real success criteria. "+NO_MD,
+   prompt:f=>`My project charter says the goal is:\n\n"${f.goal}"\n\nMy executive sponsor is a ${f.sponsor}. Help me pressure-test this. What are the 3-4 real metrics they're probably actually watching? What questions should I ask to confirm or challenge the stated goal?`},
+  {num:"#6",title:"Get close to your sponsor",desc:"Draft a status update template for your exec",badge:"Template",
+   fields:[{id:"format",label:"How they prefer updates",type:"input",ph:"e.g. weekly email, Slack message, verbal in 1:1"},{id:"style",label:"What you know about their style",type:"textarea",ph:"e.g. Very data-driven, hates fluff, wants risks surfaced early, reads on mobile..."}],
+   sys:"You are an expert executive communication coach for project managers. Write concise, structured status updates. No filler. "+NO_MD,
+   prompt:f=>`My executive sponsor prefers ${f.format} updates. Here's what I know about their style:\n\n${f.style}\n\nDraft a reusable status update template tailored to them. It should be clear, surface risks proactively, and feel written for them specifically, not a generic PM template.`},
+  {num:"#7",title:"Find the informal influencers",desc:"Identify the real unblocking forces on your team",badge:"People",
+   fields:[{id:"team",label:"Your team, key names and roles",type:"textarea",ph:"e.g. Sarah (senior eng), Marcus (QA lead), Priya (design), James (scrum master)..."}],
+   sys:"You are an organizational dynamics expert and experienced program manager. Help new PMs read their team effectively. "+NO_MD,
+   prompt:f=>`Here are the people on my project:\n\n${f.team}\n\nHelp me think through who the informal influencers and unblocking forces might be, the people without PM titles who quietly get things done. What signals should I look for? How should I approach building trust with them early?`},
+  {num:"#8",title:"Build your single source of truth",desc:"Design a living project tracker",badge:"Template",
+   fields:[{id:"tool",label:"Tool you're using",type:"input",ph:"e.g. Notion, Confluence, Google Docs, Airtable"},{id:"project",label:"Project type and context",type:"input",ph:"e.g. software launch, org transformation, vendor migration"}],
+   sys:"You are an expert program manager and productivity systems designer. Create practical, lean tracking templates. "+NO_MD,
+   prompt:f=>`Help me design a living project tracker in ${f.tool} for a ${f.project} project. It needs to cover: status, risks, key decisions with dates and owners, open questions, and schedule. Make it practical, something I'll actually update weekly, not something that will rot.`},
+  {num:"#9",title:"No big process changes yet",desc:"Decide whether to flag, document, or let it go",badge:"Judgment",
+   fields:[{id:"issue",label:"Process or workflow issue you've noticed",type:"textarea",ph:"e.g. The team doesn't have a clear definition of done. Tickets get closed before QA..."},{id:"weeks",label:"How many weeks you've been on the project",type:"input",ph:"e.g. 3"}],
+   sys:"You are a senior PM coach specializing in helping new project managers navigate their first 90 days. Be honest and direct about timing and political dynamics. "+NO_MD,
+   prompt:f=>`I'm ${f.weeks} weeks into a new PM role and I've noticed this issue:\n\n${f.issue}\n\nHelp me decide: should I flag it now, document it quietly for later, or let it go entirely? Give me your honest take on the timing, the political risk, and what I should do next.`},
+  {num:"#10",title:"Deliver one early win",desc:"Pick the stuck item most likely to create momentum",badge:"Strategy",
+   fields:[{id:"items",label:"2-4 things currently stuck or ambiguous",type:"textarea",ph:"e.g. 1. No one owns the QA sign-off process\n2. Design handoff blocked on a vendor decision\n3. Sprint ceremonies not set for next quarter"}],
+   sys:"You are a strategic PM advisor who helps new project managers build credibility fast. Be decisive and practical. "+NO_MD,
+   prompt:f=>`I'm a new PM looking for my first visible win. Here are things currently stuck or ambiguous on my project:\n\n${f.items}\n\nWhich one is most likely to create real, visible momentum if I resolved it in the next 2 weeks? Explain why, and give me a concrete first move for each option so I can pick with confidence.`}
+];
+let sel=null,history=[],currentSys="",isTyping=false,msgStore=[];
+function strip(t){return t.replace(/\*+/g,'').replace(/#{1,6}\s/g,'');}
+function escHtml(t){return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>");}
+function escAttr(t){return t.replace(/"/g,"&quot;").replace(/\n/g," ");}
+function renderCards(){
+  document.getElementById("cardList").innerHTML=prompts.map((p,i)=>`
+    <div class="card ${sel===i?'active':''}" onclick="pick(${i})">
+      <div class="c-row"><div class="c-num">${p.num}</div>
+      <div><div class="c-title">${p.title}</div><div class="c-desc">${p.desc}</div>
+      <span class="badge ${BADGES[p.badge]||'bt'}">${p.badge}</span></div></div></div>`).join("");
+}
+function pick(i){sel=i;history=[];renderCards();showForm();}
+function showForm(){
+  document.getElementById("chatView").classList.remove("active");
+  document.getElementById("formView").style.display="";
+  if(sel===null){document.getElementById("emptyState").style.display="";document.getElementById("promptForm").style.display="none";return;}
+  const p=prompts[sel];
+  document.getElementById("emptyState").style.display="none";
+  document.getElementById("promptForm").style.display="";
+  document.getElementById("fNum").textContent=p.num;
+  document.getElementById("fTitle").textContent=p.title;
+  document.getElementById("fTag").textContent=p.desc;
+  document.getElementById("fFields").innerHTML=p.fields.map(f=>`
+    <div class="fg"><label class="fl">${f.label}</label>
+    ${f.type==='textarea'?`<textarea id="f_${f.id}" placeholder="${f.ph}"></textarea>`:`<input id="f_${f.id}" type="text" placeholder="${f.ph}" />`}
+    </div>`).join("");
+  document.getElementById("st").textContent="";
+}
+function backToForm(){document.getElementById("chatView").classList.remove("active");document.getElementById("formView").style.display="";}
+function resetChat(){history=[];document.getElementById("chatMessages").innerHTML="";backToForm();}
+async function run(){
+  const p=prompts[sel];const fields={};let ok=true;
+  for(const f of p.fields){const el=document.getElementById("f_"+f.id);fields[f.id]=el?el.value.trim():"";if(!fields[f.id]){ok=false;el&&el.classList.add("err");}else el&&el.classList.remove("err");}
+  if(!ok){document.getElementById("st").textContent="Please fill in all fields.";return;}
+  const btn=document.getElementById("runBtn"),sp=document.getElementById("spin"),arr=document.getElementById("arr"),st=document.getElementById("st");
+  btn.disabled=true;sp.classList.add("on");arr.style.display="none";st.textContent="Generating...";
+  currentSys=p.sys;history=[{role:"user",content:p.prompt(fields)}];
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:currentSys,messages:history})});
+    const data=await res.json();
+    const reply=strip(data.content?.map(b=>b.text||"").join("")||"No response received.");
+    history.push({role:"assistant",content:reply});
+    msgStore=[];
+    document.getElementById("formView").style.display="none";
+    document.getElementById("chatView").classList.add("active");
+    document.getElementById("chatTopic").textContent=p.title;
+    document.getElementById("chatMessages").innerHTML="";
+    appendMsg("assistant",reply);
+    document.getElementById("chatInput").focus();
+    st.textContent="";
+  }catch(e){st.textContent="Something went wrong. Please try again.";}
+  finally{btn.disabled=false;sp.classList.remove("on");arr.style.display="";}
+}
+function appendMsg(role,text){
+  const msgs=document.getElementById("chatMessages");
+  const idx=msgStore.length;
+  msgStore.push(text);
+  const div=document.createElement("div");div.className="msg "+role;
+  div.innerHTML=`<div class="msg-avatar">${role==="assistant"?"AI":"You"}</div><div><div class="msg-bubble">${escHtml(text)}</div>${role==="assistant"?`<button class="msg-copy" onclick="copyMsg(this,${idx})">Copy</button>`:""}</div>`;
+  msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+}
+function showTyping(){
+  const msgs=document.getElementById("chatMessages");const div=document.createElement("div");
+  div.className="msg assistant";div.id="typingDot";
+  div.innerHTML=`<div class="msg-avatar">AI</div><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+  msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+}
+function hideTyping(){const el=document.getElementById("typingDot");if(el)el.remove();}
+async function sendMsg(){
+  if(isTyping)return;
+  const input=document.getElementById("chatInput");const text=input.value.trim();if(!text)return;
+  input.value="";input.style.height="";
+  appendMsg("user",text);history.push({role:"user",content:text});
+  isTyping=true;document.getElementById("sendBtn").disabled=true;showTyping();
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:currentSys,messages:history})});
+    const data=await res.json();
+    const reply=strip(data.content?.map(b=>b.text||"").join("")||"No response received.");
+    history.push({role:"assistant",content:reply});hideTyping();appendMsg("assistant",reply);
+  }catch(e){hideTyping();appendMsg("assistant","Something went wrong. Please try again.");}
+  finally{isTyping=false;document.getElementById("sendBtn").disabled=false;document.getElementById("chatInput").focus();}
+}
+function handleKey(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMsg();}}
+function autoResize(el){el.style.height="auto";el.style.height=Math.min(el.scrollHeight,120)+"px";}
+function copyMsg(btn,idx){
+  const text=msgStore[idx]||"";
+  const done=()=>{btn.textContent="Copied!";btn.style.color="var(--teal)";setTimeout(()=>{btn.textContent="Copy";btn.style.color="";},2000);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(()=>fb(text,btn,done));
+  }else fb(text,btn,done);
+}
+function fb(text,btn,done){
+  const ta=document.createElement("textarea");ta.value=text;ta.style.cssText="position:fixed;opacity:0";
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand("copy");if(done)done();}catch(e){}
+  document.body.removeChild(ta);
+}
+renderCards();
+</script>
+</body>
+</html>
