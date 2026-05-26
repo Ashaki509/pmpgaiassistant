@@ -48,7 +48,7 @@ Both tools work offline after the initial load and are completely free.
 
 ## 📬 Connect
 
-**Ashaki Sorrell** — Staff Technical Program Manager
+**Ashaki Sorrell** — Technical Program Management Leader
 
 - 📧 ashaki509@gmail.com
 - 💼 [LinkedIn](https://linkedin.com/in/ashakisorrell)
