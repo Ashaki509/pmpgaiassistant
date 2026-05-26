@@ -22,7 +22,7 @@ Your AI coach for executive updates, stakeholder management, escalations, status
 
 ## 📚 Prompt Library
 
-Collection of **20+ proven prompts** you can copy and use in any AI (Claude, ChatGPT, Grok, etc.).
+Collection of **20+ proven prompts** you can copy and use in any AI (Claude, ChatGPT, Gemini, etc.).
 
 **[→ Open Full Prompt Library](prompt-library.md)**
 
