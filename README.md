@@ -1,36 +1,34 @@
 # 🤖 Ashaki’s AI Tools for PMs & PgMs
 
-A collection of practical, interactive AI assistants built specifically for **Project Managers** and **Technical Program Managers**.
+A collection of practical AI tools built for **Project Managers** and **Technical Program Managers**.
 
 ---
 
-## 🛠️ Available Tools
+## 🎯 Live Interactive Tools
 
-### 1. First 90 Days AI Assistant
-Helps new PMs and PgMs quickly build trust, understand context, and deliver early impact in their critical first 90 days.
+These are full AI assistants — **recommended experience**:
 
-**[→ Launch First 90 Days Assistant](first-90-days/pm_pgm_first90_ai_assistant.html)**
+### First 90 Days AI Assistant
+Helps new PMs/PgMs build trust fast, understand context, and deliver early wins.
 
-Supporting resource: [`First90DaysPM_PgM.pdf`](first-90-days/First90DaysPM_PgM.pdf)
+**[→ Launch First 90 Days AI Assistant](https://claude.ai/public/artifacts/e4483262-be4c-4bc9-9832-0483d63ed2bb)**
 
----
+### Communication Framework Coach
+Your AI coach for executive updates, stakeholder management, escalations, status reporting, and more.
 
-### 2. Communication Framework Coach
-Your personal AI coach for high-stakes communication — executive updates, stakeholder management, escalations, status reporting, and more.
-
-**[→ Launch Communication Framework Coach](communication-coach/comm_framework_coach.html)**
+**[→ Launch Communication Framework Coach](https://claude.ai/public/artifacts/1450e453-fcce-487d-81d2-ef20d90af88e)**
 
 ---
 
-## Why These Tools?
+## 📚 Prompt Library
 
-Built from real-world experience leading complex technical programs. Focused on **practical, actionable advice**.
+Collection of **20+ proven prompts** you can copy and use in any AI (Claude, ChatGPT, Grok, etc.).
 
-Both tools are client-side and work offline after loading.
+**[→ Open Full Prompt Library](prompt-library.md)**
 
 ---
 
-## 🔗 Related Resources
+## 🔗 Related Repos
 
 - **[TPM Toolkit](https://github.com/Ashaki509/tpm-toolkit)**
 - **[Engineering OKR Playbook](https://github.com/Ashaki509/engineering-okr-playbook)**
@@ -39,7 +37,7 @@ Both tools are client-side and work offline after loading.
 
 ## 📬 Connect
 
-**Ashaki Sorrell** — Staff Technical Program Manager
+**Ashaki Sorrell** — Technical Program Management Leader
 
 - 📧 ashaki509@gmail.com
 - 💼 [LinkedIn](https://linkedin.com/in/ashakisorrell)
@@ -47,4 +45,4 @@ Both tools are client-side and work offline after loading.
 
 ---
 
-Made for PMs and PgMs who want to lead and communicate with clarity and confidence.
+Built from real-world experience to help PMs and PgMs lead with clarity and confidence.
