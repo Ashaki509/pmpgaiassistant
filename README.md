@@ -1,43 +1,48 @@
-# 🤖 PM / PgM First 90 Days AI Assistant
+# 🤖 Ashaki’s AI Tools for PMs & PgMs
 
-An interactive AI-powered tool designed to help new **Project Managers** and **Program Managers** succeed during their critical **first 90 days** on the job.
-
----
-
-## 🚀 Try It Live
-
-**[→ Open the Live First 90 Days AI Assistant](https://claude.ai/public/artifacts/e4483262-be4c-4bc9-9832-0483d63ed2bb)**
+A collection of practical, interactive AI assistants built for **Project Managers** and **Technical Program Managers**.
 
 ---
 
-## ✨ What It Helps With
+## 🛠️ Available Tools
 
-This assistant guides you through the **10 essential moves** for new PMs/PgMs:
+### 1. First 90 Days AI Assistant
+Helps new PMs and PgMs quickly build trust, understand context, and deliver early impact in their critical first 90 days.
 
-- Meeting stakeholders fast
-- Shadowing your team
-- Auditing project history
-- Mapping dependencies
-- Understanding what “done” really means
-- Building sponsor relationships
-- Finding informal influencers
-- Creating a single source of truth
-- Avoiding premature process changes
-- Delivering an early visible win
+**[→ Launch First 90 Days Assistant](first-90-days/ai_readiness_audit_v4.html)**
+
+Supporting resource: [`First90DaysPM_PgM.pdf`](first-90-days/First90DaysPM_PgM.pdf)
 
 ---
 
-## 📄 Supporting Resources
+### 2. Communication Framework Coach
+Your personal AI coach for high-stakes communication — executive updates, stakeholder management, escalations, status reporting, team meetings, and more.
 
-- [`First90DaysPM_PgM.pdf`](First90DaysPM_PgM.pdf) — Visual framework of the 10 moves
+**[→ Launch Communication Framework Coach](communication-coach/communication-framework-coach.html)**
 
 ---
 
-## 🔗 Related Repos
+## Why These Tools?
 
-- **[TPM Toolkit](https://github.com/Ashaki509/tpm-toolkit)**
-- **[Engineering OKR Playbook](https://github.com/Ashaki509/engineering-okr-playbook)**
-- **[Enterprise Platform Migrations](https://github.com/Ashaki509/EnterprisePlatformMigrations)**
+Built from real-world experience leading complex technical programs. They focus on **actionable advice** you can use immediately — not generic theory.
+
+Both tools work offline after the initial load and are completely free.
+
+---
+
+## 🚀 How to Use
+
+1. Click the tool links above
+2. Select a topic or describe your situation
+3. Get tailored frameworks, templates, and communication guidance
+
+---
+
+## 🔗 Related Resources
+
+- **[TPM Toolkit](https://github.com/Ashaki509/tpm-toolkit)** — Program management templates & playbooks
+- **[Engineering OKR Playbook](https://github.com/Ashaki509/engineering-okr-playbook)** — Engineering OKR frameworks
+- **[Enterprise Platform Migrations](https://github.com/Ashaki509/EnterprisePlatformMigrations)** — Migration frameworks
 
 ---
 
@@ -48,3 +53,7 @@ This assistant guides you through the **10 essential moves** for new PMs/PgMs:
 - 📧 ashaki509@gmail.com
 - 💼 [LinkedIn](https://linkedin.com/in/ashakisorrell)
 - 🐙 [GitHub](https://github.com/Ashaki509)
+
+---
+
+Made for PMs and PgMs who want to communicate and lead with clarity and confidence.
