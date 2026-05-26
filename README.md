@@ -1,6 +1,6 @@
 # 🤖 Ashaki’s AI Tools for PMs & PgMs
 
-A collection of practical, interactive AI assistants built for **Project Managers** and **Technical Program Managers**.
+A collection of practical, interactive AI assistants built specifically for **Project Managers** and **Technical Program Managers**.
 
 ---
 
@@ -24,31 +24,22 @@ Your personal AI coach for high-stakes communication — executive updates, stak
 
 ## Why These Tools?
 
-Built from real-world experience leading complex technical programs. They focus on **actionable advice** you can use immediately — not generic theory.
+Built from real-world experience leading complex technical programs. Focused on **practical, actionable advice** you can use immediately.
 
-Both tools work offline after the initial load and are completely free.
-
----
-
-## 🚀 How to Use
-
-1. Click the tool links above
-2. Select a topic or describe your situation
-3. Get tailored frameworks, templates, and communication guidance
+Both tools work offline after loading and are completely free.
 
 ---
 
 ## 🔗 Related Resources
 
-- **[TPM Toolkit](https://github.com/Ashaki509/tpm-toolkit)** — Program management templates & playbooks
-- **[Engineering OKR Playbook](https://github.com/Ashaki509/engineering-okr-playbook)** — Engineering OKR frameworks
-- **[Enterprise Platform Migrations](https://github.com/Ashaki509/EnterprisePlatformMigrations)** — Migration frameworks
+- **[TPM Toolkit](https://github.com/Ashaki509/tpm-toolkit)**
+- **[Engineering OKR Playbook](https://github.com/Ashaki509/engineering-okr-playbook)**
 
 ---
 
 ## 📬 Connect
 
-**Ashaki Sorrell** — Technical Program Management Leader
+**Ashaki Sorrell** — Staff Technical Program Manager
 
 - 📧 ashaki509@gmail.com
 - 💼 [LinkedIn](https://linkedin.com/in/ashakisorrell)
@@ -56,4 +47,4 @@ Both tools work offline after the initial load and are completely free.
 
 ---
 
-Made for PMs and PgMs who want to communicate and lead with clarity and confidence.
+Made for PMs and PgMs who want to lead and communicate with clarity and confidence.
